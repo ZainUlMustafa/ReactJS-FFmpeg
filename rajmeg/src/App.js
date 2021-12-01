@@ -35,14 +35,19 @@ function App() {
   const convertToFrames = async () => {
     ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(video));
 
-    await ffmpeg.run('-i', 'test.mp4', '-vf', 'fps=30', 'output%0d.png');
+    await ffmpeg.run('-i', 'test.mp4', '-vsync', '0', 'output%0d.png');
+    // await ffmpeg.run('-i', 'test.mp4', '-t', `${endTime}`, '-ss', `${startTime}`, '-vf', 'fps="30"', 'output%0d.png');
+    // await ffmpeg.run('-i', 'test.mp4', '-t', `${endTime}`, '-ss', `${startTime}`, '-vsync', '0', 'output%0d.png');
 
-    // console.log(ffmpeg.FS);
     var listOfUrls = [];
-    for (var i = 1; i < 30 * 18; ++i) {
-      const data = ffmpeg.FS('readFile', `output${i}.png`);
-      const url = URL.createObjectURL(new Blob([data.buffer], { type: 'image/png' }));
-      listOfUrls = [...listOfUrls, url];
+    for (var i = 1; i <= (60 * 20000); ++i) {
+      try {
+        const data = ffmpeg.FS('readFile', `output${i}.png`);
+        const url = URL.createObjectURL(new Blob([data.buffer], { type: 'image/png' }));
+        listOfUrls = [...listOfUrls, url];
+      } catch (e) {
+        break;
+      }
     }
     setImages(listOfUrls);
   }
